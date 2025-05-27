@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/google/uuid"
+
 	"github.com/tufee/desk-reservation-go/internal/domain"
 	"github.com/tufee/desk-reservation-go/internal/service"
 	"github.com/tufee/desk-reservation-go/internal/utils"
@@ -25,7 +25,7 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	user := buildUserFromRequest(data)
 	ctx := context.WithValue(r.Context(), utils.CreateUserKey, user)
 
-	if _, err := service.CreateUserService(ctx); err != nil {
+	if err := service.CreateUserService(ctx); err != nil {
 		w.Header().Set("Content-Type", "application/json")
 
 		switch e := err.(type) {
@@ -57,7 +57,11 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func parseAndValidateRequest(r *http.Request, data *domain.CreateUser, w http.ResponseWriter) error {
+func parseAndValidateRequest(
+	r *http.Request,
+	data *domain.CreateUser,
+	w http.ResponseWriter,
+) error {
 	if err := json.NewDecoder(r.Body).Decode(data); err != nil {
 		http.Error(w, "Invalid JSON", http.StatusBadRequest)
 		return err
@@ -75,7 +79,6 @@ func parseAndValidateRequest(r *http.Request, data *domain.CreateUser, w http.Re
 func buildUserFromRequest(data domain.CreateUser) domain.User {
 	now := time.Now()
 	return domain.User{
-		Id:         uuid.New().String(),
 		Name:       data.Name,
 		Email:      data.Email,
 		Password:   data.Password,
