@@ -1,5 +1,7 @@
 package utils
 
+import "fmt"
+
 type BadRequestError struct {
 	Message string
 }
@@ -18,7 +20,11 @@ type InternalServerError struct {
 }
 
 func (e *InternalServerError) Error() string {
-	return e.Message
+	return fmt.Sprintf("%s: %v", e.Message, e.Err)
+}
+
+func (e *InternalServerError) Unwrap() error {
+	return e.Err
 }
 
 func NewInternalServerError(message string, err error) *InternalServerError {
