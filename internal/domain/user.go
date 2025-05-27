@@ -5,10 +5,10 @@ import (
 )
 
 type User struct {
-	Id         string    `dynamodbav:"id"`
-	Name       string    `dynamodbav:"name"`
-	Email      string    `dynamodbav:"email"`
-	Password   string    `dynamodbav:"password"`
-	Created_at time.Time `dynamodbav:"created_at"`
-	Updated_at time.Time `dynamodbav:"updated_at"`
+	Id         string    `json:"id"`
+	Name       string    `json:"name"`
+	Email      string    `json:"email"`
+	Password   string    `json:"password"`
+	Created_at time.Time `json:"created_at"`
+	Updated_at time.Time `json:"updated_at"`
 }
