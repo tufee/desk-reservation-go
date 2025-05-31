@@ -1,7 +1,6 @@
 package api
 
 import (
-	"context"
 	"encoding/json"
 	"net/http"
 
@@ -19,7 +18,7 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user := buildUserFromRequest(data)
-	ctx := context.WithValue(r.Context(), utils.CreateUserKey, user)
+	ctx := utils.SetContextValue(r.Context(), utils.CreateUserKey, user)
 
 	if err := service.CreateUserService(ctx); err != nil {
 		pkg.HandleHTTPError(w, err)
@@ -33,10 +32,11 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func buildUserFromRequest(data domain.CreateUser) domain.User {
-	return domain.User{
-		Name:     data.Name,
-		Email:    data.Email,
-		Password: data.Password,
+func buildUserFromRequest(data domain.CreateUser) domain.CreateUser {
+	return domain.CreateUser{
+		Name:                 data.Name,
+		Email:                data.Email,
+		Password:             data.Password,
+		PasswordConfirmation: data.PasswordConfirmation,
 	}
 }

@@ -12,9 +12,10 @@ import (
 func CreateUserService(ctx context.Context) error {
 	log := pkg.GetLogger()
 
-	user, err := extractUserFromContext(ctx)
-	if err != nil {
-		return err
+	user, ok := utils.GetContextValue[domain.CreateUser](ctx, utils.CreateUserKey)
+	if !ok {
+		log.Error("Error: Invalid user type in context")
+		return pkg.NewBadRequestError("invalid user type in context")
 	}
 
 	log.Info("Processing user creation for email: %s", user.Email)
@@ -42,18 +43,6 @@ func CreateUserService(ctx context.Context) error {
 
 	log.Info("Successfully created user with email: %s", user.Email)
 	return nil
-}
-
-func extractUserFromContext(ctx context.Context) (domain.User, error) {
-	log := pkg.GetLogger()
-
-	userData := ctx.Value(utils.CreateUserKey)
-	user, ok := userData.(domain.User)
-	if !ok {
-		log.Error("Error: Invalid user type in context")
-		return domain.User{}, pkg.NewBadRequestError("invalid user type in context")
-	}
-	return user, nil
 }
 
 func checkExistingUser(ctx context.Context, db *infra.Db, email string) error {

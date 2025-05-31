@@ -48,7 +48,7 @@ func (db *Db) FindUserByEmail(ctx context.Context, email string) (*domain.User, 
 	return &user, nil
 }
 
-func (db *Db) SaveUser(ctx context.Context, user domain.User) error {
+func (db *Db) SaveUser(ctx context.Context, user domain.CreateUser) error {
 	query := `
 	INSERT INTO users (name, email, password)
 	VALUES (:name, :email, :password)
