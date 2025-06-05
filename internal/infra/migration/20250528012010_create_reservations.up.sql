@@ -5,7 +5,7 @@ CREATE TABLE reservations (
 	desk_id UUID NOT NULL REFERENCES desks(id),
 	user_id UUID NOT NULL REFERENCES users(id),
 	date TIMESTAMP NOT NULL,
-	status TEXT NOT NULL CHECK (status IN ('pending', 'confirmed', 'cancelled')) DEFAULT 'pending',
-	created_at TIMESTAMP NOT NULL DEFAULT NOW()
+	status TEXT NOT NULL CHECK (status IN ('pending', 'confirmed', 'cancelled')) DEFAULT 'pending', 
+	created_at TIMESTAMP NOT NULL DEFAULT NOW(),
 	updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
