@@ -33,17 +33,15 @@ func CreateReservationService(ctx context.Context) error {
 		return err
 	}
 
-	if isReservationMade.Id != "xx" {
-		return pkg.NewBadRequestError("desk is unavailable")
+	if isReservationMade.Id == "" {
+		if err := db.SaveReservation(ctx, reservation); err != nil {
+			log.Error("Error saving user to database: %v", err)
+			return pkg.NewBadRequestError("error to create reservation")
+		}
+		log.Info("reservation created successfully")
+		return nil
 	}
-
-	if err := db.SaveReservation(ctx, reservation); err != nil {
-		log.Error("Error saving user to database: %v", err)
-		return pkg.NewBadRequestError("error to create reservation")
-	}
-
-	log.Info("reservation created successfully")
-	return nil
+	return pkg.NewBadRequestError("desk is unavailable")
 }
 
 func checkReservationMade(
@@ -57,6 +55,11 @@ func checkReservationMade(
 	if err != nil {
 		log.Error("Error to find reservation: %v", err)
 		return domain.Reservation{}, pkg.NewInternalServerError("failed to find reservation", err)
+	}
+
+	if reservation == nil {
+		log.Info("No existing reservation found for desk: %s", reservationData.DeskId)
+		return domain.Reservation{}, nil
 	}
 
 	return *reservation, nil

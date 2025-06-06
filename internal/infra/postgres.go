@@ -103,7 +103,7 @@ func (db *Db) FindReservation(
 func (db *Db) SaveReservation(ctx context.Context, reservation domain.CreateReservation) error {
 	query := `
 	INSERT INTO reservations (desk_id, user_id, date)
-	VALUES (:desk_id, :user_Id, :date)
+	VALUES (:desk_id, :user_id, :date)
 	`
 	_, err := db.Conn.NamedExecContext(ctx, query, reservation)
 	if err != nil {
