@@ -7,5 +7,6 @@ func SetupRoutes() *http.ServeMux {
 
 	mux.HandleFunc("POST /user", CreateUserHandler)
 	mux.HandleFunc("POST /reservation", CreateReservationHandler)
+	mux.HandleFunc("POST /login", LoginHandler)
 	return mux
 }

@@ -7,6 +7,7 @@ type ctxKey string
 const (
 	CreateUserKey        ctxKey = "CreateUser"
 	CreateReservationKey ctxKey = "CreateReservation"
+	LoginKey             ctxKey = "LoginKey"
 )
 
 func SetContextValue[T any](ctx context.Context, key ctxKey, value T) context.Context {
