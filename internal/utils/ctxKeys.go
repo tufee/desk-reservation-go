@@ -8,6 +8,8 @@ const (
 	CreateUserKey        ctxKey = "CreateUser"
 	CreateReservationKey ctxKey = "CreateReservation"
 	LoginKey             ctxKey = "LoginKey"
+	AuthUserKey          ctxKey = "AuthUser"
+	AuthEmailKey         ctxKey = "AuthEmail"
 )
 
 func SetContextValue[T any](ctx context.Context, key ctxKey, value T) context.Context {
