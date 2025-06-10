@@ -38,7 +38,7 @@ func CreateUserService(ctx context.Context) error {
 
 	if err := db.SaveUser(ctx, user); err != nil {
 		log.Error("Error saving user to database: %v", err)
-		return pkg.NewBadRequestError("error saving user")
+		return err
 	}
 
 	log.Info("Successfully created user with email: %s", user.Email)

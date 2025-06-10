@@ -25,7 +25,7 @@ func CreateReservationService(ctx context.Context) error {
 
 	db, err := infra.InitializeDB()
 	if err != nil {
-		return pkg.NewInternalServerError("failed to initialize database", err)
+		return err
 	}
 
 	isReservationMade, err := checkReservationMade(ctx, db, reservation)
@@ -36,7 +36,7 @@ func CreateReservationService(ctx context.Context) error {
 	if isReservationMade.Id == "" {
 		if err := db.SaveReservation(ctx, reservation); err != nil {
 			log.Error("Error saving user to database: %v", err)
-			return pkg.NewBadRequestError("error to create reservation")
+			return err
 		}
 		log.Info("reservation created successfully")
 		return nil

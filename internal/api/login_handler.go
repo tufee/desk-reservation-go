@@ -27,7 +27,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(`{"token": "` + token + `"}`))
+	w.Write([]byte(`{"token": "` + token.Token + `"}`))
 }
 
 func buildCredentialsFromRequest(data domain.Credentials) domain.Credentials {
