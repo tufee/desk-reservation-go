@@ -22,7 +22,7 @@ func CreateUserService(ctx context.Context) error {
 
 	db, err := infra.InitializeDB()
 	if err != nil {
-		return pkg.NewInternalServerError("failed to initialize database", err)
+		return err
 	}
 
 	if err := checkExistingUser(ctx, db, user.Email); err != nil {
