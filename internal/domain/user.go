@@ -1,8 +1,14 @@
 package domain
 
 import (
+	"context"
 	"time"
 )
+
+type UserRepositoryInterface interface {
+	FindUserByEmail(ctx context.Context, email string) (*User, error)
+	SaveUser(ctx context.Context, user CreateUser) error
+}
 
 type User struct {
 	Id         string    `json:"id"`

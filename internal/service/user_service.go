@@ -4,12 +4,15 @@ import (
 	"context"
 
 	"github.com/tufee/desk-reservation-go/internal/domain"
-	"github.com/tufee/desk-reservation-go/internal/infra"
 	"github.com/tufee/desk-reservation-go/internal/utils"
 	pkg "github.com/tufee/desk-reservation-go/pkg/utils"
 )
 
-func CreateUserService(ctx context.Context) error {
+type UserService struct {
+	UserRepository domain.UserRepositoryInterface
+}
+
+func (repo *UserService) CreateUserService(ctx context.Context) error {
 	log := pkg.GetLogger()
 
 	user, ok := utils.GetContextValue[domain.CreateUser](ctx, utils.CreateUserKey)
@@ -20,12 +23,7 @@ func CreateUserService(ctx context.Context) error {
 
 	log.Info("Processing user creation for email: %s", user.Email)
 
-	db, err := infra.InitializeDB()
-	if err != nil {
-		return err
-	}
-
-	if err := checkExistingUser(ctx, db, user.Email); err != nil {
+	if err := checkExistingUser(ctx, repo, user.Email); err != nil {
 		return err
 	}
 
@@ -36,7 +34,7 @@ func CreateUserService(ctx context.Context) error {
 
 	user.Password = hashedPassword
 
-	if err := db.SaveUser(ctx, user); err != nil {
+	if err := repo.UserRepository.SaveUser(ctx, user); err != nil {
 		log.Error("Error saving user to database: %v", err)
 		return err
 	}
@@ -45,10 +43,10 @@ func CreateUserService(ctx context.Context) error {
 	return nil
 }
 
-func checkExistingUser(ctx context.Context, db *infra.Db, email string) error {
+func checkExistingUser(ctx context.Context, repo *UserService, email string) error {
 	log := pkg.GetLogger()
 
-	existingUser, err := db.FindUserByEmail(ctx, email)
+	existingUser, err := repo.UserRepository.FindUserByEmail(ctx, email)
 	if err != nil {
 		log.Error("Error checking existing user: %v", err)
 		return pkg.NewInternalServerError("failed to check existing user", err)
