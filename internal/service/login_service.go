@@ -4,12 +4,15 @@ import (
 	"context"
 
 	"github.com/tufee/desk-reservation-go/internal/domain"
-	"github.com/tufee/desk-reservation-go/internal/infra"
 	"github.com/tufee/desk-reservation-go/internal/utils"
 	pkg "github.com/tufee/desk-reservation-go/pkg/utils"
 )
 
-func LoginService(ctx context.Context) (*domain.LoginResponse, error) {
+type LoginService struct {
+	UserRepository domain.UserRepositoryInterface
+}
+
+func (repo *LoginService) LoginService(ctx context.Context) (*domain.LoginResponse, error) {
 	log := pkg.GetLogger()
 
 	credentials, ok := utils.GetContextValue[domain.Credentials](
@@ -23,12 +26,7 @@ func LoginService(ctx context.Context) (*domain.LoginResponse, error) {
 
 	log.Info("Processing login for: %s", credentials.Email)
 
-	db, err := infra.InitializeDB()
-	if err != nil {
-		return nil, err
-	}
-
-	user, err := GetUserByEmail(ctx, db, credentials.Email)
+	user, err := GetUserByEmail(ctx, repo, credentials.Email)
 	if err != nil {
 		log.Error("error to find user by email: %v", err)
 		return nil, err
@@ -49,10 +47,10 @@ func LoginService(ctx context.Context) (*domain.LoginResponse, error) {
 	return &domain.LoginResponse{Token: token}, nil
 }
 
-func GetUserByEmail(ctx context.Context, db *infra.Db, email string) (*domain.User, error) {
+func GetUserByEmail(ctx context.Context, repo *LoginService, email string) (*domain.User, error) {
 	log := pkg.GetLogger()
 
-	user, err := db.FindUserByEmail(ctx, email)
+	user, err := repo.UserRepository.FindUserByEmail(ctx, email)
 	if err != nil {
 		return nil, err
 	}
