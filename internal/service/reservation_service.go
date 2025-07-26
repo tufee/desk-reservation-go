@@ -4,12 +4,15 @@ import (
 	"context"
 
 	"github.com/tufee/desk-reservation-go/internal/domain"
-	"github.com/tufee/desk-reservation-go/internal/infra"
 	"github.com/tufee/desk-reservation-go/internal/utils"
 	pkg "github.com/tufee/desk-reservation-go/pkg/utils"
 )
 
-func CreateReservationService(ctx context.Context) error {
+type ReservationService struct {
+	ReservationRepository domain.ReservationRepositoryInterface
+}
+
+func (repo *ReservationService) CreateReservationService(ctx context.Context) error {
 	log := pkg.GetLogger()
 
 	reservation, ok := utils.GetContextValue[domain.CreateReservation](
@@ -23,18 +26,13 @@ func CreateReservationService(ctx context.Context) error {
 
 	log.Info("Processing reservation for desk: %s", reservation.DeskId)
 
-	db, err := infra.InitializeDB()
-	if err != nil {
-		return err
-	}
-
-	isReservationMade, err := checkReservationMade(ctx, db, reservation)
+	isReservationMade, err := checkReservationMade(ctx, repo, reservation)
 	if err != nil {
 		return err
 	}
 
 	if isReservationMade.Id == "" {
-		if err := db.SaveReservation(ctx, reservation); err != nil {
+		if err := repo.ReservationRepository.SaveReservation(ctx, reservation); err != nil {
 			log.Error("Error saving user to database: %v", err)
 			return err
 		}
@@ -46,12 +44,12 @@ func CreateReservationService(ctx context.Context) error {
 
 func checkReservationMade(
 	ctx context.Context,
-	db *infra.Db,
+	repo *ReservationService,
 	reservationData domain.CreateReservation,
 ) (domain.Reservation, error) {
 	log := pkg.GetLogger()
 
-	reservation, err := db.FindReservation(ctx, reservationData)
+	reservation, err := repo.ReservationRepository.FindReservation(ctx, reservationData)
 	if err != nil {
 		log.Error("Error to find reservation: %v", err)
 		return domain.Reservation{}, pkg.NewInternalServerError("failed to find reservation", err)

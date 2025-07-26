@@ -5,6 +5,8 @@ import (
 	"net/http"
 
 	"github.com/tufee/desk-reservation-go/internal/domain"
+	"github.com/tufee/desk-reservation-go/internal/infra"
+	repo "github.com/tufee/desk-reservation-go/internal/infra/repository"
 	"github.com/tufee/desk-reservation-go/internal/service"
 	"github.com/tufee/desk-reservation-go/internal/utils"
 	pkg "github.com/tufee/desk-reservation-go/pkg/utils"
@@ -20,7 +22,15 @@ func CreateReservationHandler(w http.ResponseWriter, r *http.Request) {
 	reservation := buildReservationFromRequest(data)
 	ctx := utils.SetContextValue(r.Context(), utils.CreateReservationKey, reservation)
 
-	if err := service.CreateReservationService(ctx); err != nil {
+	db, err := infra.InitializeDB()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	reservationRepository := &repo.ReservationRepositoryDb{Conn: db.Conn}
+	reservationService := service.ReservationService{ReservationRepository: reservationRepository}
+
+	if err := reservationService.CreateReservationService(ctx); err != nil {
 		pkg.HandleHTTPError(w, err)
 		return
 	}
