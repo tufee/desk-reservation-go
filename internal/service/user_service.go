@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/tufee/desk-reservation-go/internal/domain"
-	"github.com/tufee/desk-reservation-go/internal/utils"
 	pkg "github.com/tufee/desk-reservation-go/pkg/utils"
 )
 
@@ -12,14 +11,8 @@ type UserService struct {
 	UserRepository domain.UserRepositoryInterface
 }
 
-func (repo *UserService) CreateUserService(ctx context.Context) error {
+func (repo *UserService) CreateUserService(ctx context.Context, user domain.CreateUser) error {
 	log := pkg.GetLogger()
-
-	user, ok := utils.GetContextValue[domain.CreateUser](ctx, utils.CreateUserKey)
-	if !ok {
-		log.Error("Error: Invalid user type in context")
-		return pkg.NewBadRequestError("invalid user type in context")
-	}
 
 	log.Info("Processing user creation for email: %s", user.Email)
 

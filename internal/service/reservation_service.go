@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/tufee/desk-reservation-go/internal/domain"
-	"github.com/tufee/desk-reservation-go/internal/utils"
 	pkg "github.com/tufee/desk-reservation-go/pkg/utils"
 )
 
@@ -12,17 +11,11 @@ type ReservationService struct {
 	ReservationRepository domain.ReservationRepositoryInterface
 }
 
-func (repo *ReservationService) CreateReservationService(ctx context.Context) error {
+func (repo *ReservationService) CreateReservationService(
+	ctx context.Context,
+	reservation domain.CreateReservation,
+) error {
 	log := pkg.GetLogger()
-
-	reservation, ok := utils.GetContextValue[domain.CreateReservation](
-		ctx,
-		utils.CreateReservationKey,
-	)
-	if !ok {
-		log.Error("Error: Invalid reservation type in context")
-		return pkg.NewBadRequestError("invalid reservation type in context")
-	}
 
 	log.Info("Processing reservation for desk: %s", reservation.DeskId)
 

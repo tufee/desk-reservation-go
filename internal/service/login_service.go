@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/tufee/desk-reservation-go/internal/domain"
-	"github.com/tufee/desk-reservation-go/internal/utils"
 	pkg "github.com/tufee/desk-reservation-go/pkg/utils"
 )
 
@@ -12,17 +11,11 @@ type LoginService struct {
 	UserRepository domain.UserRepositoryInterface
 }
 
-func (repo *LoginService) LoginService(ctx context.Context) (*domain.LoginResponse, error) {
+func (repo *LoginService) LoginService(
+	ctx context.Context,
+	credentials domain.Credentials,
+) (*domain.LoginResponse, error) {
 	log := pkg.GetLogger()
-
-	credentials, ok := utils.GetContextValue[domain.Credentials](
-		ctx,
-		utils.LoginKey,
-	)
-
-	if !ok {
-		return nil, pkg.NewBadRequestError("invalid credentials type in context")
-	}
 
 	log.Info("Processing login for: %s", credentials.Email)
 
