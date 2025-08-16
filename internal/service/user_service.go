@@ -42,7 +42,7 @@ func checkExistingUser(ctx context.Context, repo *UserService, email string) err
 	existingUser, err := repo.UserRepository.FindUserByEmail(ctx, email)
 	if err != nil {
 		log.Error("Error checking existing user: %v", err)
-		return pkg.NewInternalServerError("failed to check existing user", err)
+		return err
 	}
 
 	if existingUser != nil {
