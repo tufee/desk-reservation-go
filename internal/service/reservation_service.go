@@ -24,7 +24,7 @@ func (repo *ReservationService) CreateReservationService(
 		return err
 	}
 
-	if isReservationMade.Id == "" {
+	if isReservationMade == nil {
 		if err := repo.ReservationRepository.SaveReservation(ctx, reservation); err != nil {
 			log.Error("Error saving user to database: %v", err)
 			return err
@@ -39,19 +39,19 @@ func checkReservationMade(
 	ctx context.Context,
 	repo *ReservationService,
 	reservationData domain.CreateReservation,
-) (domain.Reservation, error) {
+) (*domain.Reservation, error) {
 	log := pkg.GetLogger()
 
 	reservation, err := repo.ReservationRepository.FindReservation(ctx, reservationData)
 	if err != nil {
 		log.Error("Error to find reservation: %v", err)
-		return domain.Reservation{}, pkg.NewInternalServerError("failed to find reservation", err)
+		return nil, pkg.NewInternalServerError("failed to find reservation", err)
 	}
 
 	if reservation == nil {
 		log.Info("No existing reservation found for desk: %s", reservationData.DeskId)
-		return domain.Reservation{}, nil
+		return nil, nil
 	}
 
-	return *reservation, nil
+	return reservation, nil
 }
