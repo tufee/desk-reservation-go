@@ -68,7 +68,6 @@ func TestGenerateJWT(t *testing.T) {
 			t.Error("token should not be empty")
 		}
 
-		// Validate the generated token
 		claims, err := ValidateToken(token)
 		if err != nil {
 			t.Errorf("Generated token is invalid: %v", err)
