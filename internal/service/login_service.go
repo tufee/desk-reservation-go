@@ -29,7 +29,7 @@ func (repo *LoginService) LoginService(
 
 	if !isPasswordMatch {
 		log.Info("Invalid password for user: %s", credentials.Email)
-		return nil, pkg.NewBadRequestError("invalid email or password")
+		return nil, pkg.NewBadRequestError("invalid password")
 	}
 
 	token, err := pkg.GenerateJWT(user.Id, user.Email)
