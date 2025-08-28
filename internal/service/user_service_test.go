@@ -11,16 +11,16 @@ import (
 	pkg "github.com/tufee/desk-reservation-go/pkg/utils"
 )
 
-type mockDB struct {
+type userRepo struct {
 	findUserByEmailFunc func(ctx context.Context, email string) (*domain.User, error)
 	saveUserFunc        func(ctx context.Context, user domain.CreateUser) error
 }
 
-func (m *mockDB) FindUserByEmail(ctx context.Context, email string) (*domain.User, error) {
+func (m *userRepo) FindUserByEmail(ctx context.Context, email string) (*domain.User, error) {
 	return m.findUserByEmailFunc(ctx, email)
 }
 
-func (m *mockDB) SaveUser(ctx context.Context, user domain.CreateUser) error {
+func (m *userRepo) SaveUser(ctx context.Context, user domain.CreateUser) error {
 	return m.saveUserFunc(ctx, user)
 }
 
@@ -33,7 +33,7 @@ func TestCreateUserService(t *testing.T) {
 			Password: "password123",
 		}
 
-		mock := &mockDB{
+		mock := &userRepo{
 			findUserByEmailFunc: func(ctx context.Context, email string) (*domain.User, error) {
 				return nil, nil
 			},
@@ -55,7 +55,7 @@ func TestCreateUserService(t *testing.T) {
 			Password: "password123",
 		}
 
-		mock := &mockDB{
+		mock := &userRepo{
 			findUserByEmailFunc: func(ctx context.Context, email string) (*domain.User, error) {
 				return &domain.User{Email: email}, nil
 			},
@@ -77,7 +77,7 @@ func TestCreateUserService(t *testing.T) {
 			Password: "password123",
 		}
 
-		mock := &mockDB{
+		mock := &userRepo{
 			findUserByEmailFunc: func(ctx context.Context, email string) (*domain.User, error) {
 				return nil, pkg.NewInternalServerError(
 					"failed to query user by email",
@@ -103,7 +103,7 @@ func TestCreateUserService(t *testing.T) {
 func TestCheckExistingUser(t *testing.T) {
 	t.Run("should return nil for non-existing user", func(t *testing.T) {
 		email := "nonexistent@example.com"
-		mock := &mockDB{
+		mock := &userRepo{
 			findUserByEmailFunc: func(ctx context.Context, email string) (*domain.User, error) {
 				return nil, nil
 			},
@@ -118,7 +118,7 @@ func TestCheckExistingUser(t *testing.T) {
 
 	t.Run("should return error for existing user", func(t *testing.T) {
 		email := "existing@example.com"
-		mock := &mockDB{
+		mock := &userRepo{
 			findUserByEmailFunc: func(ctx context.Context, email string) (*domain.User, error) {
 				return &domain.User{Email: email}, nil
 			},
