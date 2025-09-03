@@ -11,32 +11,32 @@ import (
 func TestHandleHTTPError(t *testing.T) {
 	tests := []struct {
 		name           string
-		err           error
+		err            error
 		expectedCode   int
-		expectedBody   map[string]interface{}
+		expectedBody   map[string]any
 		expectedStatus string
 	}{
 		{
 			name:         "bad request error",
-			err:         NewBadRequestError("invalid input"),
+			err:          NewBadRequestError("invalid input"),
 			expectedCode: http.StatusBadRequest,
-			expectedBody: map[string]interface{}{
+			expectedBody: map[string]any{
 				"message": "invalid input",
 			},
 		},
 		{
 			name:         "internal server error with wrapped error",
-			err:         NewInternalServerError("processing failed", errors.New("database error")),
+			err:          NewInternalServerError("processing failed", errors.New("database error")),
 			expectedCode: http.StatusInternalServerError,
-			expectedBody: map[string]interface{}{
+			expectedBody: map[string]any{
 				"message": "processing failed: database error",
 			},
 		},
 		{
 			name:         "default error case",
-			err:         errors.New("unknown error"),
+			err:          errors.New("unknown error"),
 			expectedCode: http.StatusInternalServerError,
-			expectedBody: map[string]interface{}{
+			expectedBody: map[string]any{
 				"message": "Internal server error",
 			},
 		},
@@ -47,26 +47,22 @@ func TestHandleHTTPError(t *testing.T) {
 			rr := httptest.NewRecorder()
 			HandleHTTPError(rr, tt.err)
 
-			// Check status code
 			if status := rr.Code; status != tt.expectedCode {
 				t.Errorf("handler returned wrong status code: got %v want %v",
 					status, tt.expectedCode)
 			}
 
-			// Check Content-Type header
 			contentType := rr.Header().Get("Content-Type")
 			if contentType != "application/json" {
 				t.Errorf("handler returned wrong content type: got %v want %v",
 					contentType, "application/json")
 			}
 
-			// Check response body
-			var response map[string]interface{}
+			var response map[string]any
 			if err := json.NewDecoder(rr.Body).Decode(&response); err != nil {
 				t.Fatalf("Unable to decode response body: %v", err)
 			}
 
-			// Compare response with expected
 			for key, expectedValue := range tt.expectedBody {
 				if actualValue, exists := response[key]; !exists {
 					t.Errorf("Expected key %s in response, but it was missing", key)
@@ -78,3 +74,4 @@ func TestHandleHTTPError(t *testing.T) {
 		})
 	}
 }
+
