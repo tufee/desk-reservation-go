@@ -1,0 +1,12 @@
+{
+  "scripts": {
+    "build-css": "npx tailwindcss -i ./web/static/css/input.css -o ./web/static/css/output.css --watch",
+    "build-css-prod": "npx tailwindcss -i ./web/static/css/input.css -o ./web/static/css/output.css --minify"
+  },
+  "devDependencies": {
+    "@tailwindcss/forms": "^0.5.10",
+    "@tailwindcss/typography": "^0.5.16",
+    "daisyui": "^5.1.8",
+    "tailwindcss": "^3.4.17"
+  }
+}
