@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Seus estilos customizados aqui */
+@layer components {
+	.btn-custom {
+		@apply bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded;
+	}
+}

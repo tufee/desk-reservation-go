@@ -1,0 +1,15 @@
+{{define "content"}}
+<div>
+	<h1>Usuários</h1>
+	<div id="users-list" hx-get="/users" hx-trigger="load">
+		Carregando...
+	</div>
+
+	<form hx-post="/users" hx-target="#users-list">
+		<input type="text" name="user" placeholder="User">
+		<input type="text" name="password" placeholder="Password">
+		<button type="button">Adicionar</button>
+		<button class="btn btn-md">Large</button>
+	</form>
+</div>
+{{end}}
