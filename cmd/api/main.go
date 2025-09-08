@@ -51,10 +51,10 @@ func main() {
 	router := api.SetupRoutes()
 
 	server := http.Server{
-		Addr:    ":3000",
+		Addr:    ":8080",
 		Handler: router,
 	}
 
-	fmt.Println("Server listening on port 3000")
+	fmt.Println("Server listening on port 8080")
 	server.ListenAndServe()
 }
